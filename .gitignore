@@ -1,0 +1,13 @@
+.vscode/
+build/
+bootstrap/res/
+PrxEncrypter
+*.o
+DATA.PSP
+PBOOT.PBP
+eboot/payload.h
+*.elf
+*.prx
+payload/bootstrap.h
+payload/payload.bin
+payload/payload.bin.gz
