@@ -3,7 +3,6 @@
 
 #include "rpc.h"
 
-#define REDIRECT_FUNCTION(a, f) _sw(0x08000000 | (((u32)(f) >> 2) & 0x03ffffff), a); _sw(0, a+4);
 
 typedef struct SceModule3 
 {
@@ -46,8 +45,6 @@ extern int (* _sceMeRequest)(int cmd, ...);
 
 extern int (* _sceKermitRequest)(KermitRequest *request, int mode, int cmd, int argc, int is_callback, u64 *resp);
 extern int (* _sceKermitMemoryArgument)(KermitRequest *request, int arg, const void *data, int size, int mode);
-
-extern SceModule3 *(*_sceKernelFindModuleByName)(const char *name);
 
 int exploit_mips_kernel(void);
 

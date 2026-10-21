@@ -1,4 +1,5 @@
-#include <inttypes.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "bootstrap.h"
 
@@ -169,14 +170,23 @@ int strcmp(const char *s1, const char *s2) {
 	return (*(unsigned char *)s1 - *(unsigned char *)--s2);
 }
 
-static inline int memcpy(void *dst, const void *src, int len) {
-	char *dst1 = (char *)dst;
-	const char *src1 = (const char *)src;
-	while (len > 0) {
-		*dst1++ = *src1++;
-		len--;
-	}
-	return 0;
+void* memcpy(void* dst, const void* src, size_t len)
+{
+	char* d = (char*)dst;
+	const char* s = (const char*)src;
+	while (len-- > 0)
+		*d++ = *s++;
+
+	return dst;
+}
+
+void* memset(void* dst, int val, size_t len)
+{
+	char* p = (char*)dst;
+	while (len-- > 0)
+		*p++ = val;
+
+	return dst;
 }
 
 module_info_t * find_modinfo(uint32_t start_addr, const char *needle) {
