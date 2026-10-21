@@ -17,53 +17,57 @@
 
 #define MAX_BASES 16
 
-static int rop_bases[MAX_BASES];
-static void *rop_buf;
-static int rop_size;
+static unsigned int rop_bases[MAX_BASES];
+static void* rop_buf;
+static unsigned int rop_size;
 static int rop_seek;
 static int rop_begin = 0;
 
-int register_base(int index, int base) {
-  if (index >= MAX_BASES)
-    return -1;
+int register_base(int index, unsigned int base)
+{
+	if (index >= MAX_BASES)
+		return -1;
 
-  rop_bases[index] = base;
-  return 0;
+	rop_bases[index] = base;
+	return 0;
 }
 
-int begin_rop(void *buf, int size) {
-  if (rop_begin)
-    return -1;
+int begin_rop(void* buf, unsigned int size)
+{
+	if (rop_begin)
+		return -1;
 
-  register_base(0, 0);
-  rop_buf = buf;
-  rop_size = size;
-  rop_seek = 0;
-  rop_begin = 1;
+	register_base(0, 0);
+	rop_buf = buf;
+	rop_size = size;
+	rop_seek = 0;
+	rop_begin = 1;
 
-  return 0;
+	return 0;
 }
 
-int end_rop(void) {
-  if (!rop_begin)
-    return -1;
+int end_rop(void)
+{
+	if (!rop_begin)
+		return -1;
 
-  int size = rop_seek;
+	int size = rop_seek;
 
-  rop_buf = NULL;
-  rop_size = 0;
-  rop_seek = 0;
-  rop_begin = 0;
+	rop_buf = NULL;
+	rop_size = 0;
+	rop_seek = 0;
+	rop_begin = 0;
 
-  return size;
+	return size;
 }
 
-int push(int base_index, int gadget) {
-  if (!rop_begin || rop_seek >= rop_size || base_index >= MAX_BASES)
-    return -1;
+int push(int base_index, unsigned int gadget)
+{
+	if (!rop_begin || rop_seek >= rop_size || base_index >= MAX_BASES)
+		return -1;
 
-  *(int *)(rop_buf + rop_seek) = rop_bases[base_index] + gadget;
-  rop_seek += 4;
+	*(unsigned int*)(rop_buf + rop_seek) = rop_bases[base_index] + gadget;
+	rop_seek += 4;
 
-  return 0;
+	return 0;
 }

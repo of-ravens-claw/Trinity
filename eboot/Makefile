@@ -3,7 +3,7 @@ release: all
 	pack-pbp PBOOT.PBP PARAMS.SFO ICON0.PNG NULL NULL NULL NULL DATA.PSP NULL
 
 TARGET = trinity
-OBJS = main.o rain.o mips.o arm.o krop.o rpc.o rop.o imports.o
+OBJS = main.o rain.o mips.o arm.o krop.o rpc.o rop.o
 
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti

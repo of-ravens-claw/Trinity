@@ -20,52 +20,54 @@
 
 PSP_MODULE_INFO("Trinity", 0, 1, 0);
 
-__attribute__((__used__)) char *message = "Hi Sony! Hire me now?";
+int main(int argc, char* argv[])
+{
+	int res;
+	SceCtrlData pad;
 
-int main(int argc, char *argv[]) {
-  int res;
-  SceCtrlData pad;
+	pspDebugScreenInit();
 
-  pspDebugScreenInit();
+	sceCtrlPeekBufferPositive(&pad, 1);
+	if (pad.Buttons & PSP_CTRL_LTRIGGER)
+	{
+		matrix_rain(NULL);
+		return 0;
+	}
 
-  sceCtrlPeekBufferPositive(&pad, 1);
-  if (pad.Buttons & PSP_CTRL_LTRIGGER) {
-    matrix_rain(NULL);
-    return 0;
-  }
+	if (!sceWlanGetSwitchState())
+	{
+		pspDebugScreenSetXY(17, 15);
+		pspDebugScreenPrintf("[TURN ON WI-FI TO USE THIS EXPLOIT]");
+		sceKernelDelayThread(10 * 1000 * 1000);
+		sceKernelExitGame();
+		return 0;
+	}
 
-  if (!sceWlanGetSwitchState()) {
-    pspDebugScreenSetXY(17, 15);
-    pspDebugScreenPrintf("[TURN ON WI-FI TO USE THIS EXPLOIT]");
-    sceKernelDelayThread(10 * 1000 * 1000);
-    sceKernelExitGame();
-    return 0;
-  }
+	res = exploit_mips_kernel();
+	if (res < 0)
+		goto err;
 
-  res = exploit_mips_kernel();
-  if (res < 0)
-    goto err;
+	res = rain_animation();
+	if (res < 0)
+		goto err;
 
-  res = rain_animation();
-  if (res < 0)
-    goto err;
+	res = exploit_arm_userland();
+	if (res < 0)
+		goto err;
 
-  res = exploit_arm_userland();
-  if (res < 0)
-    goto err;
-
-  res = exploit_arm_kernel();
-  if (res < 0)
-    goto err;
+	res = exploit_arm_kernel();
+	if (res < 0)
+		goto err;
 
 err:
-  if (res < 0) {
-    pspDebugScreenClear();
-    pspDebugScreenSetXY(20, 15);
-    pspDebugScreenPrintf("[EXPLOIT FAILED: 0x%08X]", res);
-  }
+	if (res < 0)
+	{
+		pspDebugScreenClear();
+		pspDebugScreenSetXY(20, 15);
+		pspDebugScreenPrintf("[EXPLOIT FAILED: 0x%08X]", res);
+	}
 
-  sceKernelDelayThread(10 * 1000 * 1000);
-  sceKernelExitGame();
-  return 0;
+	sceKernelDelayThread(10 * 1000 * 1000);
+	sceKernelExitGame();
+	return 0;
 }
