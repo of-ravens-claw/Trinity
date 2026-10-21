@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "main.h"
 #include "krop.h"
 #include "rpc.h"
 #include "rop.h"

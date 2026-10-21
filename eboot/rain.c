@@ -14,8 +14,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "main.h"
-
 #define WIDTH  60
 #define HEIGHT 34
 

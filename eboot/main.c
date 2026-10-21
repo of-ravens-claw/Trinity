@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "main.h"
 #include "rain.h"
 #include "mips.h"
 #include "arm.h"
@@ -37,7 +36,7 @@ int main(int argc, char *argv[]) {
 
   if (!sceWlanGetSwitchState()) {
     pspDebugScreenSetXY(17, 15);
-    printf("[TURN ON WI-FI TO USE THIS EXPLOIT]");
+    pspDebugScreenPrintf("[TURN ON WI-FI TO USE THIS EXPLOIT]");
     sceKernelDelayThread(10 * 1000 * 1000);
     sceKernelExitGame();
     return 0;
@@ -63,7 +62,7 @@ err:
   if (res < 0) {
     pspDebugScreenClear();
     pspDebugScreenSetXY(20, 15);
-    printf("[EXPLOIT FAILED: 0x%08X]", res);
+    pspDebugScreenPrintf("[EXPLOIT FAILED: 0x%08X]", res);
   }
 
   sceKernelDelayThread(10 * 1000 * 1000);

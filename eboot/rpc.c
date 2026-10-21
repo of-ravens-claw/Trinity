@@ -9,12 +9,12 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspctrl.h>
+#include <cfwmacros.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
-#include "main.h"
 #include "arm.h"
 #include "mips.h"
 #include "rpc.h"
