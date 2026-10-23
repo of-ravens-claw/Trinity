@@ -1,6 +1,9 @@
 #ifndef __RPC_H__
 #define __RPC_H__
 
+// 0x08000000 - some MIPS thing, I don't know the PSP's memory map (maybe excludes psp kernel memory region?)
+// 0x70000000 - Vita memory... I think PSP meemory is allocated in Vita CDRAM. but mapping appears to be user uncached? 0x68000000 is cdialog not cached, but it cant be using that.
+// ... i'm pretty sure it's fine.
 #define NATIVE(addr) (((u32)(addr) & 0x1fffffff) - 0x08000000 + 0x70000000)
 
 #define ME_CMD_CSC_ROW  0x151
@@ -22,23 +25,25 @@ typedef struct KermitRequest
 	u64    args[14];
 } KermitRequest;
 
-typedef struct KermitAdhocCreateParam
+typedef struct KermitAdhocCreateParam // Size: 0x70
 {
 	u8 mac[6];
 	u8 channel;
 	u8 bufsize;
-	u8 buf[0x100];
+	u8 buf[0x100]; // Real size is 0x68 (or maybe less than)
 } KermitAdhocCreateParam;
 
+// Userland stubs (call these)
 extern int (*read_native)(void* dst, u32 src, size_t len);
 extern int (*syscall)(int num, ...);
 extern int (*call)(int func, ...);
-extern int (*init_rpc)(u32 cookie, u32 pspemu_base, u32 libkernel_base);
+extern int (*init_rpc)(u32 cookie, u32 pspemu_base, u32 libkernel_base, u32 libkernel_data);
 
+// Implementation for kernel
 int _read_native(void* dst, u32 src, size_t len);
 int _syscall(int num, ...);
 int _call(int func, ...);
-int _init_rpc(u32 cookie, u32 pspemu_base, u32 libkernel_base);
+int _init_rpc(u32 cookie, u32 pspemu_base, u32 libkernel_base, u32 libkernel_data);
 
 void push_call(int func, ...);
 void push_syscall(int num, ...);

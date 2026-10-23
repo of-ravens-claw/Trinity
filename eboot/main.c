@@ -43,25 +43,33 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
+	pspDebugScreenPrintf("1. exploit mips kernel\n");
 	res = exploit_mips_kernel();
 	if (res < 0)
 		goto err;
 
-	res = rain_animation();
-	if (res < 0)
-		goto err;
+// this is stupid. it doesn't even look cool.
+// and it hijacks our debug screen...
+//	res = rain_animation();
+//	if (res < 0)
+//		goto err;
 
+	pspDebugScreenPrintf("2. exploit arm userland\n");
 	res = exploit_arm_userland();
 	if (res < 0)
 		goto err;
 
-	res = exploit_arm_kernel();
-	if (res < 0)
-		goto err;
+//	pspDebugScreenPrintf("3. exploit arm kernel\n");
+//	res = exploit_arm_kernel();
+//	if (res < 0)
+//		goto err;
+
+	pspDebugScreenPrintf("no error! quitting in 10 seconds...\n");
 
 err:
 	if (res < 0)
 	{
+		sceKernelDelayThread(5 * 1000 * 1000);
 		pspDebugScreenClear();
 		pspDebugScreenSetXY(20, 15);
 		pspDebugScreenPrintf("[EXPLOIT FAILED: 0x%08X]", res);

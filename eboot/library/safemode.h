@@ -1,4 +1,4 @@
-/* safemode.h -- SceSafeMode exports/imports
+/* safemode.h -- SceSafeMode imports
  *
  * Copyright (C) 2019 TheFloW
  *
@@ -9,9 +9,7 @@
 #ifndef __SAFEMODE_H__
 #define __SAFEMODE_H__
 
-// Imports
-
 // SceUdcd
-#define SceSafeMode_sceUdcdWaitState 0x2a3c50
+#define SceSafeMode_sceUdcdWaitState 0x2a4870
 
 #endif

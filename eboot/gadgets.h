@@ -10,32 +10,33 @@
 #define __GADGETS_H__
 
 // ScePspemu gadgets
-#define ScePspemu_str_r0_r1_bx_lr                   0x1e78f
-#define ScePspemu_str_r2_r1_bx_lr                   0x1e7b5
-#define ScePspemu_str_r3_r0_movs_r0_0_bx_lr         0x1a8a7
+#define ScePspemu_str_r0_r1_bx_lr                   0x1ebd7
+#define ScePspemu_str_r2_r1_bx_lr                   0x1ebfb
+#define ScePspemu_str_r3_r0_movs_r0_0_bx_lr         0x18e0b
 
 #define ScePspemu_mov_lr_r3_bx_lr                   0x9
 
-#define ScePspemu_syscall                           0x6af0
-#define ScePspemu_remoteNetAdhocCreate_lr           0x12f35
+#define ScePspemu_syscall                           0x1a398
+#define ScePspemu_remoteNetAdhocCreate_lr           0x11a35
 
 // SceLibKernel gadgets
-#define SceLibKernel_pop_pc                         0x9e7
+#define SceLibKernel_pop_pc                         0x985
 #define SceLibKernel_pop_r0_pc                      0x141
-#define SceLibKernel_pop_r0_r1_pc                   0xd03
-#define SceLibKernel_pop_r1_r2_r3_pc                0x3b5
-#define SceLibKernel_pop_r3_pc                      0x14b1
-#define SceLibKernel_pop_r4_r5_r6_r7_pc             0xad7d
-#define SceLibKernel_pop_ip_pc                      0x558 // arm
+#define SceLibKernel_pop_r0_r1_pc                   0xc4b
+#define SceLibKernel_pop_r1_r2_r3_pc                0x2b3
+#define SceLibKernel_pop_r3_pc                      0x15c9
+#define SceLibKernel_pop_r4_r5_r6_r7_pc             0x126b
+#define SceLibKernel_pop_ip_pc                      0x488 // arm
 
-#define SceLibKernel_mov_ip_r0_bx_lr                0x809
-#define SceLibKernel_mov_sp_ip_pop_pc               0x1111
+#define SceLibKernel_mov_ip_r0_bx_lr                0x739
+#define SceLibKernel_mov_sp_ip_pop_pc               0x1059
 
-#define SceLibKernel_add_sp_8_pop_r4_pc             0x13a3
-#define SceLibKernel_add_r1_sp_5c_blx_r7            0x7bbf
-#define SceLibKernel_subs_r0_r1_r0_pop_pc           0x9e5
+#define SceLibKernel_add_sp_8_pop_r4_pc             0x12f7
+#define SceLibKernel_add_r1_sp_6c_blx_r7            0x6d43
+#define SceLibKernel_subs_r0_r1_r0_pop_pc           0x983
 
 // SceSysmem gadgets
+// TODO (but not important yet, we're not exploiting the kernel)
 #define SceSysmem_blx_r0                            0x1fb3f
 #define SceSysmem_blx_r4_pop_r4_pc                  0x19fb9
 

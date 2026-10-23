@@ -1,4 +1,4 @@
-/* driveruser.h -- SceDriverUser exports/imports
+/* driveruser.h -- SceDriverUser exports
  *
  * Copyright (C) 2019 TheFloW
  *
@@ -9,17 +9,15 @@
 #ifndef __DRIVERUSER_H__
 #define __DRIVERUSER_H__
 
-// Exports
-
 // SceRtcUser
-#define SceDriverUser_sceRtcGetCurrentClockLocalTime 0x41d1
-#define SceDriverUser_sceRtcConvertLocalTimeToUtc 0x41e1
+#define SceDriverUser_sceRtcGetCurrentClockLocalTime 0x325d
+#define SceDriverUser_sceRtcConvertLocalTimeToUtc 0x326d
 
 // SceDisplayUser
-#define SceDriverUser_sceDisplayGetFrameBuf 0x42a9
-#define SceDriverUser_sceDisplaySetFrameBuf 0x428d
+#define SceDriverUser_sceDisplayGetFrameBuf 0x3345
+#define SceDriverUser_sceDisplaySetFrameBuf 0x3329
 
 // SceAppMgrUser
-#define SceDriverUser_sceAppMgrPspSaveDataGetParams 0x47f1
+#define SceDriverUser_sceAppMgrPspSaveDataGetParams 0x3869
 
 #endif

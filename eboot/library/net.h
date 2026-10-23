@@ -12,12 +12,12 @@
 // Exports
 
 // SceNet
-#define SceNet_sceNetRecv 0x285d
+#define SceNet_sceNetRecv 0x2711
 
 // Imports
 
 // SceNetPsForSyscalls
-#define SceNet_sceNetSyscallGetIfList 0xa050
-#define SceNet_sceNetSyscallControl 0xa110
+#define SceNet_sceNetSyscallGetIfList 0x9c04
+#define SceNet_sceNetSyscallControl 0x9cc4
 
 #endif

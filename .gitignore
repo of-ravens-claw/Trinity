@@ -11,3 +11,4 @@ eboot/payload.h
 payload/bootstrap.h
 payload/payload.bin
 payload/payload.bin.gz
+work/
