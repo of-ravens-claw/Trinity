@@ -37,13 +37,13 @@ typedef struct KermitAdhocCreateParam // Size: 0x70
 extern int (*read_native)(void* dst, u32 src, size_t len);
 extern int (*syscall)(int num, ...);
 extern int (*call)(int func, ...);
-extern int (*init_rpc)(u32 cookie, u32 pspemu_base, u32 libkernel_base, u32 libkernel_data);
+extern int (*init_rpc)(u32 cookie, u32 pspemu_base, u32 libkernel_base);
 
 // Implementation for kernel
 int _read_native(void* dst, u32 src, size_t len);
 int _syscall(int num, ...);
 int _call(int func, ...);
-int _init_rpc(u32 cookie, u32 pspemu_base, u32 libkernel_base, u32 libkernel_data);
+int _init_rpc(u32 cookie, u32 pspemu_base, u32 libkernel_base);
 
 void push_call(int func, ...);
 void push_syscall(int num, ...);
