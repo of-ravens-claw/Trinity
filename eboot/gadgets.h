@@ -17,7 +17,7 @@
 #define ScePspemu_mov_lr_r3_bx_lr                   0x9
 
 #define ScePspemu_syscall                           0x1a398
-#define ScePspemu_remoteNetAdhocCreate_lr           0x11a35
+#define ScePspemu_remoteNetAdhocCreate_lr           0x11a39
 
 // SceLibKernel gadgets
 #define SceLibKernel_pop_pc                         0x985

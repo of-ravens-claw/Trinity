@@ -398,9 +398,9 @@ int _init_rpc(u32 cookie, u32 pspemu_base, u32 libkernel_base, u32 libkernel_dat
 	//push(1, 0x11);    // pc sp+0x08 HACKED, NEEDS pspemu_plugin
 	push(2, SceLibKernel_pop_r1_r2_r3_pc);        // pc sp+0x0C
 	push(0, NATIVE(&stack_pointer));              // r1 sp+0x10
-	//push(0, NATIVE(request_uncached));            // r2 sp+0x14 must point to request (this is the only thing in ScePspemuRemoteNet's stack we must keep the same)
+	push(0, NATIVE(request_uncached));            // r2 sp+0x14 must point to request (this is the only thing in ScePspemuRemoteNet's stack we must keep the same)
 	// this works, but it hangs after a bit, which i expected.
-	push(0, libkernel_data); // let's try this?
+	//push(0, libkernel_data); // let's try this?
 	//push(0, 0xe000f000); // fwiw this gets derefenced, so it must be a valid address at least. (here i give it libkernel data, go on kid)
 	//push(0, 0); // null ptr dereference.
 	push(2, SceLibKernel_pop_pc);                 // r3 sp+0x18
